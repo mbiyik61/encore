@@ -1,4 +1,4 @@
-package de.techfak.gse.template;
+package de.techfak.gse.mbiyik;
 
 import org.junit.Test;
 
