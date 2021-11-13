@@ -33,7 +33,7 @@
         android:id="@+id/config"
         android:layout_width="170dp"
         android:layout_height="200dp"
-        android:hint="Geben Sie eine Spielkonfiguration ein"
+        android:hint="Geben Sie ein gültiges Spielfeld ein"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
