@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.GridLayout;
 import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -21,6 +22,16 @@ public class MainActivity2 extends AppCompatActivity {
         gridLayout.setColumnCount(spalten);
         gridLayout.setRowCount(zeilen);
         GridColors(gridLayout,field);
+    }
+    //Alertdialog wird erstellt 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Möchten Sie das Spiel verlassen?");
+        alert.setMessage("Der Spielfortschritt wird gelöscht und Sie landen wieder im Hauptmenü.");
+        alert.setPositiveButton("Ja",(dialog, which) -> super.onBackPressed());
+        alert.setNegativeButton("Nein", (dialog, which) -> {});
+        alert.show();
     }
     //Erstellt ein TextView und füllt den Background mit der entsprechenden Farbe aus und gegebenenfalls werden Großbuchstaben angekreuzt
     public void GridColors(GridLayout gridLayout,String[] input) {
