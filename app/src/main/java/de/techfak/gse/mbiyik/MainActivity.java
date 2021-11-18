@@ -2,6 +2,7 @@ package de.techfak.gse.mbiyik;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,17 +26,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick(View view) {
         EditText editText = findViewById(R.id.config);
+        int zeilen = 7;
+        int spalten = 15;
 
         Log.i("log", String.valueOf(editText.getText()));
         String input = editText.getText().toString();
-        if ((!valideLayout(input,view,7,15)) || (!valideField(input, view))) {
+        if ((!valideLayout(input,view,zeilen,spalten)) || (!valideField(input, view))) {
             editText.setText("");
             editText.setHint("Bitte versuchen Sie es erneut.");
-
         }
-
-
-
+        else {
+            Intent intent = new Intent(MainActivity.this,MainActivity2.class);
+            intent.putExtra("input", editText.getText());
+            intent.putExtra("zeilen", zeilen);
+            intent.putExtra("spalten",spalten);
+            startActivity(intent);
+        }
     }
 
     public boolean valideLayout(String input,View view, int zeilen,int spalten) {
@@ -59,12 +65,11 @@ public class MainActivity extends AppCompatActivity {
         }
         return count == zeilen;
     }
-
+    //Alle Elemente des Inputs (ausser "\n" und " ") werden mit den vorgegebenen Farben verglichen und falls ein Buchstabe nicht vorkommt, wird die Exception ausgegeben
     public boolean valideField(String input, View view) {
         String[] colors = {"b", "B", "g", "G", "o", "O", "r", "R", "y", "Y"};
         String[] seperate = input.split("");
         boolean contains = true;
-
         try {
             loop:
             for (int i = 1; i < seperate.length; i++) {
@@ -75,9 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         } else if ((!seperate[i].matches(color) && (color.equals("Y")))) {
                             contains = false;
                             break loop;
-
                         }
-
                     }
                 }
             }
@@ -90,5 +93,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return contains;
     }
-
 }

@@ -10,7 +10,10 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.ProjectTemplate">
         <activity
-            android:name="de.techfak.gse.mbiyik.MainActivity"
+            android:name=".MainActivity2"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="landscape">
             <intent-filter>
