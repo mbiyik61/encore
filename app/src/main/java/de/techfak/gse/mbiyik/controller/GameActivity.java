@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
-
+import android.view.View.OnClickListener;
+import android.view.View;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -19,6 +20,17 @@ import de.techfak.gse.mbiyik.model.GameApplication;
 public class GameActivity extends AppCompatActivity implements PropertyChangeListener {
     private GameApplication gameApplication;
     private GridLayout gridLayout;
+    private final OnClickListener onClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            TextView textView = (TextView) view;
+            if (textView.getText().equals("")) {
+                textView.setText("X");
+            } else {
+                textView.setText("");
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +84,7 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
                 square.setTextColor(Color.BLACK);
                 square.setGravity(17);
                 square.setId(i);
+                square.setOnClickListener(onClickListener);
 
                 char uppercase = field[i].charAt(0);
                 if (Character.isUpperCase(uppercase)) {
@@ -104,7 +117,6 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
         }
 
     }
-
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
