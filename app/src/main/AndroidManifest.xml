@@ -3,17 +3,18 @@
     package="de.techfak.gse.mbiyik">
 
     <application
-        android:allowBackup="false"
+        android:name=".model.GameApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="mbiyik"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="false"
+        android:supportsRtl="true"
         android:theme="@style/Theme.ProjectTemplate">
         <activity
-            android:name=".MainActivity2"
+            android:name=".controller.GameActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".controller.MainActivity"
             android:exported="true"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -23,5 +24,6 @@
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>
