@@ -1,6 +1,11 @@
 package de.techfak.gse.mbiyik.model;
 
 
+import android.graphics.Color;
+import android.view.View;
+import android.widget.GridLayout;
+import android.widget.TextView;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -61,5 +66,14 @@ public class Game {
 
     public void removeListener(PropertyChangeListener listener) {
         support.removePropertyChangeListener(listener);
+    }
+    public void markingFields(GridLayout gridLayout) {
+        for (int i = 0; i < gridLayout.getChildCount(); i++) {
+            View view = gridLayout.getChildAt(i);
+            if (view instanceof TextView && ((TextView) view).getText().equals("X")) {
+                ((TextView) view).setTextColor(Color.parseColor("#808080"));
+                view.setEnabled(false);
+            }
+        }
     }
 }

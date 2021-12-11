@@ -117,7 +117,12 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
         }
 
     }
+    public void nextRound(View view) {
+        int currentRound = gameApplication.getGame().getRound();
+        gameApplication.getGame().setRound(currentRound + 1);
+        gameApplication.getGame().markingFields(gridLayout);
 
+    }
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         TextView rundenAnzeige = findViewById(R.id.round);
