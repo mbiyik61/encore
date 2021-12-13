@@ -13,9 +13,10 @@ public class Game {
     private String board;
     private int points;
     private int round;
-    private int zeilen = 7;
-    private int spalten = 15;
+    private final int zeilen = 7;
+    private final int spalten = 15;
     private final PropertyChangeSupport support;
+    private Turn turn;
 
     public Game(String board) {
         this.board = board;
@@ -48,16 +49,18 @@ public class Game {
         return zeilen;
     }
 
-    public void setZeilen(int zeilen) {
-        this.zeilen = zeilen;
-    }
+
 
     public int getSpalten() {
         return spalten;
     }
 
-    public void setSpalten(int spalten) {
-        this.spalten = spalten;
+    public Turn getTurn() {
+        return turn;
+    }
+
+    public void setTurn(Turn turn) {
+        this.turn = turn;
     }
 
     public void addListener(PropertyChangeListener listener) {
