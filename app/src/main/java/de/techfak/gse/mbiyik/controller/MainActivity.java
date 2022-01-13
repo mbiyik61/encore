@@ -10,8 +10,8 @@ import android.widget.EditText;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import de.techfak.gse.mbiyik.InvalidBoardLayout;
-import de.techfak.gse.mbiyik.InvalidField;
+import de.techfak.gse.mbiyik.model.InvalidBoardLayout;
+import de.techfak.gse.mbiyik.model.InvalidField;
 import de.techfak.gse.mbiyik.R;
 import de.techfak.gse.mbiyik.model.Game;
 import de.techfak.gse.mbiyik.model.GameApplication;

@@ -15,24 +15,24 @@ import com.google.android.material.snackbar.Snackbar;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import de.techfak.gse.mbiyik.model.InvalidTurn;
 import de.techfak.gse.mbiyik.R;
+import de.techfak.gse.mbiyik.model.CheckColor;
 import de.techfak.gse.mbiyik.model.Game;
 import de.techfak.gse.mbiyik.model.GameApplication;
 import de.techfak.gse.mbiyik.model.Turn;
 
 
 public class GameActivity extends AppCompatActivity implements PropertyChangeListener {
+    private final String mark = "X";
     private GameApplication gameApplication;
     private GridLayout gridLayout;
-    private final OnClickListener onClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            TextView textView = (TextView) view;
-            if (textView.getText().equals("")) {
-                textView.setText("X");
-            } else {
-                textView.setText("");
-            }
+    private final OnClickListener onClickListener = view -> {
+        TextView textView = (TextView) view;
+        if (textView.getText().equals("")) {
+            textView.setText(mark);
+        } else {
+            textView.setText("");
         }
     };
     @Override
@@ -49,6 +49,8 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
         gridLayout.setColumnCount(game.getSpalten());
         gridLayout.setRowCount(game.getZeilen());
         gridColors(gridLayout, playerBoard);
+        // Button endTurn = findViewById(R.id.zugbeenden);
+        // endTurn.setEnabled(false);
 
     }
 
@@ -72,6 +74,9 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
     //Erstellt ein TextView und füllt den Background mit der entsprechenden Farbe aus und
     // gegebenenfalls werden Großbuchstaben angekreuzt
     public void gridColors(GridLayout gridLayout, String input) {
+        final int layoutParams = 100;
+        final int textSize = 20;
+        final int gravity = 17;
         String pattern = input.replaceAll("\n", "").replaceAll("[^a-zA-Z\\\\s]", "").replaceAll(" ", "");
         String[] field = pattern.split("");
 
@@ -81,18 +86,18 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
                 GridLayout.LayoutParams param = new GridLayout.LayoutParams(GridLayout.spec(
                     GridLayout.UNDEFINED, GridLayout.FILL, 1f),
                     GridLayout.spec(GridLayout.UNDEFINED, GridLayout.FILL, 1f));
-                param.height = 100;
-                param.width = 100;
+                param.height = layoutParams;
+                param.width = layoutParams;
                 square.setLayoutParams(param);
-                square.setTextSize(20);
+                square.setTextSize(textSize);
                 square.setTextColor(Color.BLACK);
-                square.setGravity(17);
+                square.setGravity(gravity);
                 square.setId(i);
                 square.setOnClickListener(onClickListener);
 
                 char uppercase = field[i].charAt(0);
                 if (Character.isUpperCase(uppercase)) {
-                    square.setText("X");
+                    square.setText(mark);
                 }
                 switch (field[i]) {
                     case "b":
@@ -120,6 +125,7 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
                         square.setTag("yellow");
                         square.setBackgroundResource(R.drawable.field_yellow);
                         break;
+                    default:
                 }
                 gridLayout.addView(square);
 
@@ -128,33 +134,53 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
     }
     public void nextRound(View view) {
         int currentRound = gameApplication.getGame().getRound();
-        Turn turns = new Turn(gameApplication.getGame(), gridLayout);
-        if (turns.unmarked(gridLayout)) {
-            if (turns.firstRound(gridLayout) && turns.validateTurn(gridLayout)) {
-                gameApplication.getGame().markingFields(gridLayout);
-                gameApplication.getGame().setRound(currentRound + 1);
-            } else {
-                Snackbar.make(view, "Der erste Zug ist nicht gültig!", Snackbar.LENGTH_SHORT).show();
-            }
-
-        } else if (!turns.unmarked(gridLayout)) {
-            if (turns.validateTurn(gridLayout)) {
-                if (turns.validateConnection(gridLayout)) {
-                    gameApplication.getGame().markingFields(gridLayout);
-                    gameApplication.getGame().setRound(currentRound + 1);
+        // Button wuerfel = findViewById(R.id.wuerfeln);
+        // Button endTurn = findViewById(R.id.zugbeenden);
+        Game game = gameApplication.getGame();
+        Turn turns = new Turn(gridLayout);
+        CheckColor colors = new CheckColor();
+        turns.layoutToArray(gridLayout);
+        int[][] field = turns.layoutToArray(gridLayout);
+        colors.colorArray(gridLayout);
+        try {
+            checkTurn(turns, gridLayout, colors);
+            if (turns.fieldEmpty(field)) {
+                if (turns.pass(field)) {
+                    game.setRound(currentRound + 1);
+                } else if (turns.validateFirstRound() && turns.validate(field) && colors.check(field)) {
+                    turns.markingFields(gridLayout);
+                    game.setRound(currentRound + 1);
                 }
             } else {
-                Snackbar.make(view, "Der Zug ist nicht gültig!", Snackbar.LENGTH_SHORT).show();
+                if (turns.pass(field)) {
+                    game.setRound(currentRound + 1);
+                } else if (turns.validate(field) && colors.check(field)) {
+                    turns.markingFields(gridLayout);
+                    game.setRound(currentRound + 1);
+                }
             }
+            //endTurn.setEnabled(false);
+            //wuerfel.setEnabled(true);
+        } catch (InvalidTurn e) {
+            Snackbar.make(view, "Der Zug ist nicht gültig!", Snackbar.LENGTH_SHORT).show();
         }
-        turns.deleteInvalid(gridLayout);
-
+    }
+    public void checkTurn(Turn turn, GridLayout gridLayout, CheckColor colors) throws InvalidTurn {
+        int[][] field = turn.layoutToArray(gridLayout);
+        if (turn.fieldEmpty(field) && !turn.pass(field)) {
+            if (!colors.check(field) || !turn.validate(field) || !turn.validateFirstRound()) {
+                throw new InvalidTurn();
+            }
+        } else if (!turn.pass(field) && (!colors.check(field) || !turn.validate(field))) {
+            throw new InvalidTurn();
+        }
     }
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        TextView rundenAnzeige = findViewById(R.id.round);
-        rundenAnzeige.setText(String.format("Runde: %s", evt.getNewValue()));
+        String propertyName = evt.getPropertyName();
+        if ("setRound".equals(propertyName)) {
+            TextView rundenAnzeige = findViewById(R.id.round);
+            rundenAnzeige.setText(String.format("Runde: %s", evt.getNewValue()));
+        }
     }
-
-
 }
