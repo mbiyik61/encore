@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CheckColor {
-    private final int zeilen = 7;
-    private final int spalten = 15;
-    private final char[][] colors = new char[zeilen][spalten];
+    private static final int ZEILEN = 7;
+    private static final int SPALTEN = 15;
+    private final char[][] colors = new char[ZEILEN][SPALTEN];
     private final ArrayList<Character> currentColors = new ArrayList<>();
 
     public CheckColor() {
@@ -18,9 +18,9 @@ public class CheckColor {
     }
 
     public void colorArray(GridLayout gridLayout) {
-        for (int i = 0; i < zeilen; i++) {
-            for (int j = 0; j < spalten; j++) {
-                TextView feld = (TextView) gridLayout.getChildAt(i * spalten + j);
+        for (int i = 0; i < ZEILEN; i++) {
+            for (int j = 0; j < SPALTEN; j++) {
+                TextView feld = (TextView) gridLayout.getChildAt(i * SPALTEN + j);
                 switch (feld.getTag().toString()) {
                     case "blue":
                         colors[i][j] = 'b';
@@ -44,8 +44,8 @@ public class CheckColor {
         }
     }
     public boolean check(int[][] field) {
-        for (int i = 0; i < zeilen; i++) {
-            for (int j = 0; j < spalten; j++) {
+        for (int i = 0; i < ZEILEN; i++) {
+            for (int j = 0; j < SPALTEN; j++) {
                 if (field[i][j] == 1) {
                     currentColors.add(colors[i][j]);
                 }

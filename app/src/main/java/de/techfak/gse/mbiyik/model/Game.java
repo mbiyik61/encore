@@ -4,8 +4,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class Game {
+    private static final int[] BOARD_SIZE = {7, 15};
     private final String board;
-    private final int[] boardSize = {7, 15};
     private final PropertyChangeSupport support;
     private int round;
 
@@ -24,10 +24,10 @@ public class Game {
         this.round = round;
     }
     public int getZeilen() {
-        return boardSize[0];
+        return BOARD_SIZE[0];
     }
     public int getSpalten() {
-        return boardSize[1];
+        return BOARD_SIZE[1];
     }
     public void addListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);

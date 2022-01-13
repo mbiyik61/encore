@@ -12,23 +12,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Turn {
+    private static final int ZEILEN = 7;
+    private static final int SPALTEN = 15;
+    private static final String MARK = "X";
+    private static final Set<Integer> COLUMN_H = new HashSet<>(Arrays.asList(7, 22, 37, 52, 67, 82, 97));
     private final GridLayout gridLayout;
-    private final int zeilen = 7;
-    private final int spalten = 15;
-    private final String mark = "X";
-    private final int[][] twodArray = new int[zeilen][spalten];
-    private final Set<Integer> columnH = new HashSet<>(Arrays.asList(7, 22, 37, 52, 67, 82, 97));
+    private final int[][] twodArray = new int[ZEILEN][SPALTEN];
 
     public Turn(GridLayout gridLayout) {
         this.gridLayout = gridLayout;
     }
     public boolean validateFirstRound() {
         boolean validate = false;
-        for (int i = 0; i < zeilen; i++) {
-            for (int j = 0; j < spalten; j++) {
-                int index = i * spalten + j;
+        for (int i = 0; i < ZEILEN; i++) {
+            for (int j = 0; j < SPALTEN; j++) {
+                int index = i * SPALTEN + j;
                 TextView feld = (TextView) gridLayout.getChildAt(index);
-                if (feld.getText().equals(mark) && feld.isEnabled() && columnH.contains(index)) {
+                if (feld.getText().equals(MARK) && feld.isEnabled() && COLUMN_H.contains(index)) {
                     validate = true;
                 }
             }
@@ -37,19 +37,19 @@ public class Turn {
     }
     public boolean pass(int[][] field) {
         int twosZeros = 0;
-        for (int i = 0; i < zeilen; i++) {
-            for (int j = 0; j < spalten; j++) {
+        for (int i = 0; i < ZEILEN; i++) {
+            for (int j = 0; j < SPALTEN; j++) {
                 if (field[i][j] == 0 || field[i][j] == 2) {
                     twosZeros++;
                 }
             }
         }
-        return twosZeros == zeilen * spalten;
+        return twosZeros == ZEILEN * SPALTEN;
     }
     public boolean fieldEmpty(int[][] field) {
         boolean empty = true;
-        for (int i = 0; i < zeilen; i++) {
-            for (int j = 0; j < spalten; j++) {
+        for (int i = 0; i < ZEILEN; i++) {
+            for (int j = 0; j < SPALTEN; j++) {
                 if (field[i][j] == 2) {
                     empty = false;
                     break;
@@ -59,12 +59,12 @@ public class Turn {
         return empty;
     }
     public int[][] layoutToArray(GridLayout gridLayout) {
-        for (int i = 0; i < zeilen; i++) {
-            for (int j = 0; j < spalten; j++) {
-                TextView feld = (TextView) gridLayout.getChildAt(i * spalten + j);
-                if (feld.getText().equals(mark) && !feld.isEnabled()) {
+        for (int i = 0; i < ZEILEN; i++) {
+            for (int j = 0; j < SPALTEN; j++) {
+                TextView feld = (TextView) gridLayout.getChildAt(i * SPALTEN + j);
+                if (feld.getText().equals(MARK) && !feld.isEnabled()) {
                     twodArray[i][j] = 2;
-                } else if (feld.getText().equals(mark) && feld.isEnabled()) {
+                } else if (feld.getText().equals(MARK) && feld.isEnabled()) {
                     twodArray[i][j] = 1;
                 }
 
@@ -76,7 +76,7 @@ public class Turn {
     public void markingFields(GridLayout gridLayout) {
         for (int i = 0; i < gridLayout.getChildCount(); i++) {
             View view = gridLayout.getChildAt(i);
-            if (view instanceof TextView && ((TextView) view).getText().equals(mark)) {
+            if (view instanceof TextView && ((TextView) view).getText().equals(MARK)) {
                 ((TextView) view).setTextColor(Color.parseColor("#808080"));
                 view.setEnabled(false);
             }

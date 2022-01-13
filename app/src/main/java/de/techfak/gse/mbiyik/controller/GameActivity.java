@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.GridLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.Button;
 import androidx.appcompat.app.AlertDialog;
 import android.view.View.OnClickListener;
 import android.view.View;
@@ -17,6 +19,7 @@ import java.beans.PropertyChangeListener;
 
 import de.techfak.gse.mbiyik.model.InvalidTurn;
 import de.techfak.gse.mbiyik.R;
+import de.techfak.gse.mbiyik.model.Dice;
 import de.techfak.gse.mbiyik.model.CheckColor;
 import de.techfak.gse.mbiyik.model.Game;
 import de.techfak.gse.mbiyik.model.GameApplication;
@@ -24,13 +27,13 @@ import de.techfak.gse.mbiyik.model.Turn;
 
 
 public class GameActivity extends AppCompatActivity implements PropertyChangeListener {
-    private final String mark = "X";
+    private static final String MARK = "X";
     private GameApplication gameApplication;
     private GridLayout gridLayout;
     private final OnClickListener onClickListener = view -> {
         TextView textView = (TextView) view;
         if (textView.getText().equals("")) {
-            textView.setText(mark);
+            textView.setText(MARK);
         } else {
             textView.setText("");
         }
@@ -49,8 +52,8 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
         gridLayout.setColumnCount(game.getSpalten());
         gridLayout.setRowCount(game.getZeilen());
         gridColors(gridLayout, playerBoard);
-        // Button endTurn = findViewById(R.id.zugbeenden);
-        // endTurn.setEnabled(false);
+        Button endTurn = findViewById(R.id.zugbeenden);
+        endTurn.setEnabled(false);
 
     }
 
@@ -97,7 +100,7 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
 
                 char uppercase = field[i].charAt(0);
                 if (Character.isUpperCase(uppercase)) {
-                    square.setText(mark);
+                    square.setText(MARK);
                 }
                 switch (field[i]) {
                     case "b":
@@ -132,10 +135,29 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
         }
 
     }
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String propertyName = evt.getPropertyName();
+        switch (propertyName) {
+            case "setRound":
+                TextView rundenAnzeige = findViewById(R.id.round);
+                rundenAnzeige.setText(String.format("Runde: %s", evt.getNewValue()));
+                break;
+            case "setNumbers":
+                int[] numbers = (int[]) evt.getNewValue();
+                changeNumbers(numbers);
+                break;
+            case "setColors":
+                char[] colors = (char[]) evt.getNewValue();
+                changeColors(colors);
+                break;
+            default:
+        }
+    }
     public void nextRound(View view) {
         int currentRound = gameApplication.getGame().getRound();
-        // Button wuerfel = findViewById(R.id.wuerfeln);
-        // Button endTurn = findViewById(R.id.zugbeenden);
+        Button wuerfel = findViewById(R.id.wuerfeln);
+        Button endTurn = findViewById(R.id.zugbeenden);
         Game game = gameApplication.getGame();
         Turn turns = new Turn(gridLayout);
         CheckColor colors = new CheckColor();
@@ -159,8 +181,8 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
                     game.setRound(currentRound + 1);
                 }
             }
-            //endTurn.setEnabled(false);
-            //wuerfel.setEnabled(true);
+            endTurn.setEnabled(false);
+            wuerfel.setEnabled(true);
         } catch (InvalidTurn e) {
             Snackbar.make(view, "Der Zug ist nicht gültig!", Snackbar.LENGTH_SHORT).show();
         }
@@ -175,12 +197,69 @@ public class GameActivity extends AppCompatActivity implements PropertyChangeLis
             throw new InvalidTurn();
         }
     }
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        String propertyName = evt.getPropertyName();
-        if ("setRound".equals(propertyName)) {
-            TextView rundenAnzeige = findViewById(R.id.round);
-            rundenAnzeige.setText(String.format("Runde: %s", evt.getNewValue()));
+    //onClick-Methode für den "Würfeln"-Button
+    public void wuerfeln(View view) {
+        Dice dice = new Dice();
+        dice.addListener(this);
+        dice.rollDice();
+        int[] numbers = dice.getNumbers();
+        char[] colors = dice.getColors();
+        dice.setNumbers(numbers);
+        dice.setColors(colors);
+        Button wuerfeln = findViewById(R.id.wuerfeln);
+        Button endTurn = findViewById(R.id.zugbeenden);
+        wuerfeln.setEnabled(false);
+        endTurn.setEnabled(true);
+    }
+    public void changeNumbers(int[] numbers) {
+        final int three = 3;
+        final int four = 4;
+        final int five = 5;
+        ImageView[] views = {findViewById(R.id.firstNr), findViewById(R.id.secondNr),  findViewById(R.id.thirdNr)};
+        for (int i = 0; i < numbers.length; i++) {
+            ImageView imageView = views[i];
+            switch (numbers[i]) {
+                case 1:
+                    imageView.setImageResource(R.drawable.one);
+                    break;
+                case 2:
+                    imageView.setImageResource(R.drawable.two);
+                    break;
+                case three:
+                    imageView.setImageResource(R.drawable.three);
+                    break;
+                case four:
+                    imageView.setImageResource(R.drawable.four);
+                    break;
+                case five:
+                    imageView.setImageResource(R.drawable.five);
+                    break;
+                default:
+            }
+        }
+    }
+    public void changeColors(char[] colors) {
+        ImageView[] views = {findViewById(R.id.firstC), findViewById(R.id.secondC), findViewById(R.id.thirdC)};
+        for (int i = 0; i < colors.length; i++) {
+            ImageView imageView = views[i];
+            switch (colors[i]) {
+                case 'b':
+                    imageView.setImageResource(R.drawable.field_blue);
+                    break;
+                case 'g':
+                    imageView.setImageResource(R.drawable.field_green);
+                    break;
+                case 'o':
+                    imageView.setImageResource(R.drawable.field_orange);
+                    break;
+                case 'r':
+                    imageView.setImageResource(R.drawable.field_red);
+                    break;
+                case 'y':
+                    imageView.setImageResource(R.drawable.field_yellow);
+                    break;
+                default:
+            }
         }
     }
 }
